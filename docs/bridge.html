@@ -12,6 +12,8 @@
       const parentOrigin = urlParams.get("parent");
 
       const receiveMessage = (evt) => {
+        console.log("EVENT RECEIVED", evt);
+
         // Make sure the parent window sent us the message
         if (evt.source !== parent) {
           return;
@@ -25,6 +27,8 @@
       };
 
       const storageChanged = (data) => {
+        console.log("STORAGE CHANGED", data);
+
         // Send message to parent window
         var data = {
           type: "message",
