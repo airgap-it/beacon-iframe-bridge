@@ -28,6 +28,7 @@
         localStorage.setItem("message", evt.data);
 
         console.log("stored successfully");
+        console.log("get", localStorage.getItem("message"));
       };
 
       const storageChanged = (data) => {
