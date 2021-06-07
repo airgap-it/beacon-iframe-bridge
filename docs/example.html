@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Beacon Bridge Example</title>
+  </head>
+
+  <body>
+    Beacon Bridge Example
+    <br /><br />
+    <button id="send">Send</button>
+    <br /><br />
+
+    <div>
+      Local counter:
+      <div id="counter"></div>
+    </div>
+    <br /><br />
+    <div>
+      Remote message:
+      <div id="message"></div>
+    </div>
+    <br /><br />
+
+    <script>
+      let counter = 0;
+
+      const createBeaconBridge = () => {
+        var ifrm = document.createElement("iframe");
+        ifrm.setAttribute(
+          "src",
+          `https://airgap-it.github.io/beacon-iframe-bridge/bridge.html?parent=${encodeURIComponent(
+            window.location.origin
+          )}`
+        );
+        ifrm.setAttribute(
+          "style",
+          "position: absolute; width:0; height:0; border:0;"
+        );
+        document.body.appendChild(ifrm);
+
+        return ifrm;
+      };
+
+      const iFrame = createBeaconBridge();
+      window.addEventListener("message", (evt) => {
+        if (evt.source !== iFrame.contentWindow) {
+          return;
+        }
+        console.log("GOT MESSAGE", evt.data);
+        document.getElementById("message").innerHTML = evt.data;
+      });
+      document.getElementById("send").addEventListener("click", () => {
+        const message = `Counter is ${counter}`;
+        iFrame.contentWindow.postMessage(
+          message,
+          "https://airgap-it.github.io"
+        );
+        document.getElementById("counter").innerHTML = message;
+        console.log(message);
+        counter++;
+      });
+    </script>
+  </body>
+</html>
