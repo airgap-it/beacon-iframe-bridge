@@ -13,34 +13,26 @@
       const urlParams = new URLSearchParams(window.location.search);
       const parentOrigin = urlParams.get("parent");
 
-      const channel = new window.BroadcastChannel2("test");
+      const channel = new window.BroadcastChannel2("beacon");
 
       const receiveMessage = (evt) => {
         console.log("EVENT RECEIVED", evt);
 
         // Make sure the parent window sent us the message
         if (evt.source !== parent) {
-          console.log("source is not parent!");
           return;
         }
         if (evt.origin !== parentOrigin) {
           throw new Error("Origin doesn't match parent url parameter");
         }
 
-        console.log("storing item", evt.data);
-        // Store the message in local storage
-        localStorage.setItem("message", evt.data);
-
-        console.log("stored successfully");
-        console.log("get", localStorage.getItem("message"));
-
         channel.postMessage(evt.data);
       };
 
-      const sendMessage = (message) => {
-        console.log("CHANNEL RECEIVED MESSAGE", message);
+      const sendMessage = (message, type = "message") => {
+        console.log("SENDING", message);
         var data = {
-          type: "message",
+          type,
           payload: message,
         };
 
@@ -49,26 +41,16 @@
 
       channel.onmessage = sendMessage;
 
-      //   const storageChanged = (data) => {
-      //     console.log("STORAGE CHANGED", data);
-
-      //     // Send message to parent window
-      //     sendMessage(data.newValue);
-      //   };
-
       if (window.addEventListener) {
         // Listen to postMessage messages
         window.addEventListener("message", receiveMessage, false);
-        // Listen to storage changes
-        // window.addEventListener("storage", storageChanged, false);
       } else {
         // In case "addEventListener" is not available
         window.attachEvent("onmessage", receiveMessage);
-        // window.attachEvent("onstorage", storageChanged);
       }
 
       const loadingComplete = () => {
-        sendMessage("ready");
+        sendMessage("", "ready");
       };
 
       loadingComplete();
