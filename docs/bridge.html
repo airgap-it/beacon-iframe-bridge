@@ -41,7 +41,7 @@
         console.log("CHANNEL RECEIVED MESSAGE", message);
         var data = {
           type: "message",
-          payload: data.newValue,
+          payload: message,
         };
 
         parent.postMessage(JSON.stringify(data), parentOrigin);
