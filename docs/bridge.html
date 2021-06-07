@@ -16,14 +16,18 @@
 
         // Make sure the parent window sent us the message
         if (evt.source !== parent) {
+          console.log("source is not parent!");
           return;
         }
         if (evt.origin !== parentOrigin) {
           throw new Error("Origin doesn't match parent url parameter");
         }
 
+        console.log("storing item", evt.data);
         // Store the message in local storage
         localStorage.setItem("message", evt.data);
+
+        console.log("stored successfully");
       };
 
       const storageChanged = (data) => {
