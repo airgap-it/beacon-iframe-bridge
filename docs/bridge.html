@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Beacon Bridge</title>
+  </head>
+
+  <body>
+    <script>
+      // Read the parent URL from the query string
+      const urlParams = new URLSearchParams(window.location.search);
+      const parentOrigin = urlParams.get("parent");
+
+      const receiveMessage = (evt) => {
+        // Make sure the parent window sent us the message
+        if (evt.source !== parent) {
+          return;
+        }
+        if (evt.origin !== parentOrigin) {
+          throw new Error("Origin doesn't match parent url parameter");
+        }
+
+        // Store the message in local storage
+        localStorage.setItem("message", evt.data);
+      };
+
+      const storageChanged = (data) => {
+        // Send message to parent window
+        var data = {
+          type: "message",
+          payload: data.newValue,
+        };
+
+        parent.postMessage(JSON.stringify(data), parentOrigin);
+      };
+
+      if (window.addEventListener) {
+        // Listen to postMessage messages
+        window.addEventListener("message", receiveMessage, false);
+        // Listen to storage changes
+        window.addEventListener("storage", storageChanged, false);
+      } else {
+        // In case "addEventListener" is not available
+        window.attachEvent("onmessage", receiveMessage);
+        window.attachEvent("onstorage", storageChanged);
+      }
+
+      const loadingComplete = () => {
+        var data = {
+          type: "ready",
+        };
+        // Send message to parent once this page/iFrame is loaded
+        parent.postMessage(JSON.stringify(data), parentOrigin);
+      };
+
+      loadingComplete();
+    </script>
+  </body>
+</html>
