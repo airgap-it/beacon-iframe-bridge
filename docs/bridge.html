@@ -37,8 +37,6 @@
         channel.postMessage(evt.data);
       };
 
-      channel.onmessage = sendMessage;
-
       const sendMessage = (message) => {
         console.log("CHANNEL RECEIVED MESSAGE", message);
         var data = {
@@ -48,6 +46,8 @@
 
         parent.postMessage(JSON.stringify(data), parentOrigin);
       };
+
+      channel.onmessage = sendMessage;
 
       //   const storageChanged = (data) => {
       //     console.log("STORAGE CHANGED", data);
